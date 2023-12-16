@@ -9,28 +9,32 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
-                // Replace these commands with your actual build commands
-                sh 'npm install' // Or any other dependency installation command
-                sh 'npm run build' // Or any other build command
+                // Install Node.js and npm (assuming you don't have a global Node installation on Jenkins)
+                sh 'curl -sL https://deb.nodesource.com/setup_14.x | bash -'
+                sh 'apt-get install -y nodejs'
+
+                // Install project dependencies
+                sh 'npm install'
             }
         }
 
-        stage('Deploy') {
+        stage('Build') {
             steps {
-                // Replace this with your deployment command (e.g., copy files to a server)
-                sh 'rsync -avz ./dist/* user@server:/path/to/destination/'
+                // Build the React.js application
+                sh 'npm run build'
             }
         }
     }
 
     post {
         success {
-            echo 'Build and deployment successful!'
+            // You can add post-build actions or notifications here
+            echo 'Build successful!'
         }
         failure {
-            echo 'Build or deployment failed!'
+            echo 'Build failed!'
         }
     }
 }
